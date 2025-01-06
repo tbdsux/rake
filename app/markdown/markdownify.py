@@ -1,10 +1,18 @@
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 
 from markdownify import MarkdownConverter, chomp
 
 
 class CustomProcessor(MarkdownConverter):
     base_url: str = ""
+    url_host = ""
+
+    def process_tag(self, node, convert_as_inline, children_only=False):
+        # Remove <noscript> tags
+        if node.name == "noscript":
+            return ""
+
+        return super().process_tag(node, convert_as_inline, children_only)
 
     def convert_a(self, el, text, convert_as_inline):
         prefix, suffix, text = chomp(text)
@@ -35,6 +43,27 @@ class CustomProcessor(MarkdownConverter):
             else text
         )
 
+    def convert_img(self, el, text, convert_as_inline):
+        alt = el.attrs.get("alt", None) or ""
+        src = el.attrs.get("src", None) or ""
+        title = el.attrs.get("title", None) or ""
+        title_part = ' "%s"' % title.replace('"', r"\"") if title else ""
+        if (
+            convert_as_inline
+            and el.parent.name not in self.options["keep_inline_images_in"]
+        ):
+            return alt
+
+        # Do not parse data URI images with no alt texts
+        if alt == "" and src.startswith("data:image/"):
+            return ""
+
+        # Add base url to src if it is not absolute
+        if not src.startswith("http://") and not src.startswith("https://"):
+            src = urljoin(self.url_host, src)
+
+        return "![%s](%s%s)" % (alt, src, title_part)
+
 
 class Markdownify:
     def __init__(self, text: str):
@@ -44,6 +73,9 @@ class Markdownify:
     def process(cls, text, base_url: str):
         processor = CustomProcessor()
         processor.base_url = base_url
+
+        parsed_url = urlparse(base_url)
+        processor.url_host = f"{parsed_url.scheme}://{parsed_url.netloc}"
 
         md = processor.convert(text)
 

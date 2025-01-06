@@ -1,11 +1,8 @@
-from typing import Literal, Optional
-
 import validators
-from fastapi import APIRouter, Request, Response
-from pydantic import BaseModel
+from fastapi import APIRouter, Response
 
 from app import utils
-from app.handlers.httpx import HTTPXRequests
+from app.handlers import ScrapeBody, handle_scrapers
 from app.handlers.primp import PrimpRequests
 from app.markdown.markdownify import Markdownify
 from app.utils import process_error
@@ -13,35 +10,15 @@ from app.utils import process_error
 api_router = APIRouter(prefix="/r")
 
 
-class ScrapeBody(BaseModel):
-    scraper: Optional[
-        Literal["nodriver", "flaresolverr", "flaresolverr-alt", "primp", "requests"]
-    ] = "requests"
-    markdown_processor: Optional[Literal["markdownify", "html2text"]] = "markdownify"
-
-
 @api_router.post("/{website:path}")
-async def post_scrape_website(request: Request, website: str, body: ScrapeBody):
+async def post_scrape_website(website: str, body: ScrapeBody):
     if not validators.url(website):
         return Response(content="Invalid URL", status_code=400)
 
-    html_response = ""
+    html_response = handle_scrapers(website, body)
 
-    if body.scraper == "requests":
-        res = HTTPXRequests.get(website)
-
-        if not res.is_ok:
-            return process_error(res.res.status_code)
-
-        html_response = res.res.text
-
-    elif body.scraper == "primp":
-        res = PrimpRequests.get(website)
-
-        if not res.is_ok:
-            return process_error(res.res.status_code)
-
-        html_response = res.res.text
+    if not isinstance(html_response, str):
+        return html_response
 
     # process html to markdown
     markdown = ""
@@ -53,7 +30,7 @@ async def post_scrape_website(request: Request, website: str, body: ScrapeBody):
 
 
 @api_router.get("/{website:path}")
-async def get_scrape_website(request: Request, website: str):
+async def get_scrape_website(website: str):
     if not validators.url(website):
         return Response(content="Invalid URL", status_code=400)
 

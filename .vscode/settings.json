@@ -5,7 +5,8 @@
     "editor.formatOnType": true,
     "editor.wordBasedSuggestions": "off",
     "editor.defaultFormatter": "charliermarsh.ruff",
-    "editor.indentSize": "tabSize"
+    "editor.indentSize": "tabSize",
+    "editor.tabSize": 4
   },
   "[toml]": {
     "editor.defaultFormatter": "tamasfe.even-better-toml"
