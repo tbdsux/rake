@@ -1,0 +1,26 @@
+[project]
+name = "rake"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi[standard]>=0.115.6",
+    "html2text>=2024.2.26",
+    "httpx>=0.28.1",
+    "markdownify>=0.14.1",
+    "nodriver>=0.38.post1",
+    "primp>=0.9.3",
+    "validators>=0.34.0",
+]
+
+[dependency-groups]
+dev = ["mypy>=1.14.1", "pytest>=8.3.4", "ruff>=0.8.6"]
+
+[tool.ruff]
+line-length = 88
+indent-width = 4
+
+[tool.ruff.lint]
+select = ["C", "E", "F", "W", "B", "B9"]
+ignore = ["E501", "E203"]

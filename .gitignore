@@ -1,0 +1,9 @@
+# virtual env
+.venv
+venv 
+
+# cache
+.mypy_cache
+.pytest_cache
+__pycache__/
+.ruff_cache
