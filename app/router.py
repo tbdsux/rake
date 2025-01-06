@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 from app import utils
 from app.handlers.httpx import HTTPXRequests
+from app.handlers.primp import PrimpRequests
 from app.markdown.markdownify import Markdownify
 from app.utils import process_error
 
@@ -27,18 +28,26 @@ async def post_scrape_website(request: Request, website: str, body: ScrapeBody):
     html_response = ""
 
     if body.scraper == "requests":
-        res = HTTPXRequests.get(website).res
+        res = HTTPXRequests.get(website)
 
-        if res.status_code != 200:
-            return process_error(res, res.status_code)
+        if not res.is_ok:
+            return process_error(res.res.status_code)
 
-        html_response = res.text
+        html_response = res.res.text
+
+    elif body.scraper == "primp":
+        res = PrimpRequests.get(website)
+
+        if not res.is_ok:
+            return process_error(res.res.status_code)
+
+        html_response = res.res.text
 
     # process html to markdown
     markdown = ""
 
     if body.markdown_processor == "markdownify":
-        markdown = Markdownify.process(html_response).text
+        markdown = Markdownify.process(html_response, website).text
 
     return Response(content=process_md(markdown), media_type="text/plain")
 
@@ -48,10 +57,10 @@ async def get_scrape_website(request: Request, website: str):
     if not validators.url(website):
         return Response(content="Invalid URL", status_code=400)
 
-    res = HTTPXRequests.get(website).res
+    res = PrimpRequests.get(website).res
 
     if res.status_code != 200:
-        return process_error(res, res.status_code)
+        return process_error(res.status_code)
 
     html_response = res.text
 

@@ -4,7 +4,7 @@ from fastapi import Response
 
 
 def process_error(status: int):
-    Response(
+    return Response(
         content=f"Error: {status} - fetch failed",
         status_code=500,
         media_type="text/plain",

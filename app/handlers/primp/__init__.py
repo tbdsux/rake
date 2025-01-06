@@ -1,14 +1,12 @@
 from typing import Any, Dict
 
-import httpx
-
-from app.lib import DEFAULT_USER_AGENT
+import primp
 
 
-class HTTPXRequests:
-    client: httpx.Client = httpx.Client(headers={"User-Agent": DEFAULT_USER_AGENT})
+class PrimpRequests:
+    client = primp.Client(impersonate="chrome_131")
 
-    def __init__(self, res: httpx.Response):
+    def __init__(self, res: Any):
         self.is_ok = res.status_code >= 200 and res.status_code < 300
         self.res = res
 
