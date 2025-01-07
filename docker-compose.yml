@@ -1,0 +1,40 @@
+services:
+  rake-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rake-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000" # set "127.0.0.1:8000" to expose only to host
+    networks:
+      - rake-network
+    environment:
+      - FLARESOLVERR_ENDPOINT=http://flaresolverr:8191
+      - FLARESOLVERR_ALT_ENDPOINT=http://flaresolverr-alt:8191
+      - FLAREBYPASSER_ENDPOINT=http://flare-bypasser:8080
+
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    restart: unless-stopped
+    networks:
+      - rake-network
+
+  flaresolverr-alt:
+    image: 21hsmw/flaresolverr:nodriver
+    container_name: flaresolverr-alt
+    restart: unless-stopped
+    networks:
+      - rake-network
+
+  flare-bypasser:
+    image: ghcr.io/yoori/flare-bypasser:latest
+    container_name: flare-bypasser
+    restart: unless-stopped
+    networks:
+      - rake-network
+
+networks:
+  rake-network:
+    driver: bridge
