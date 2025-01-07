@@ -1,7 +1,7 @@
 from typing import Literal
 from urllib.parse import urljoin
 
-import httpx
+import requests
 
 from app.handlers.flaresolverr.options import (
     FlareRequestConfig,
@@ -11,7 +11,7 @@ from app.handlers.flaresolverr.options import (
 
 
 class FlareSolverr:
-    client: httpx.Client = httpx.Client()
+    client = requests.Session()
 
     def __init__(self, res: FlareResponse):
         self.res = res
@@ -34,17 +34,24 @@ class FlareSolverr:
         data = {
             "cmd": f"request.{method}",
             "url": options.url,
-            "max_timeout": options.max_timeout,
-            "session": options.session,
-            "proxy": options.proxy,
-            "postData": options.postData,
+            "maxTimeout": options.max_timeout,
         }
+
+        if options.proxy:
+            data["proxy"] = options.proxy.model_dump_json()
+
+        if options.session:
+            data["session"] = options.session
+
+        if method == "post":
+            data["postData"] = options.postData
 
         headers = {"Content-Type": "application/json"}
 
-        req = cls.client.post(
-            urljoin(config.endpoint, "/v1"), headers=headers, json=data
-        )
-        res = FlareResponse.model_validate_json(req.text)
+        with cls.client:
+            req = cls.client.post(
+                urljoin(config.endpoint, "/v1"), headers=headers, json=data
+            )
+            res = FlareResponse.model_validate_json(req.text)
 
         return cls(res)

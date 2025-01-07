@@ -1,7 +1,7 @@
 from typing import Literal, Optional
 
 from fastapi import Response
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.handlers.flaresolverr import FlareSolverr
 from app.handlers.flaresolverr.options import FlareRequestConfig, FlareRequestOptions
@@ -13,9 +13,19 @@ from app.utils import process_error
 
 class ScrapeBody(BaseModel):
     scraper: Optional[
-        Literal["flaresolverr", "flaresolverr-alt", "primp", "requests"]
+        Literal[
+            "flaresolverr", "flaresolverr-alt", "primp", "requests", "flare-bypasser"
+        ]
     ] = "primp"
     markdown_processor: Optional[Literal["markdownify", "html2text"]] = "markdownify"
+    response: Optional[Literal["html", "md"]] = "md"
+    request_method: Optional[Literal["get", "post"]] = Field(
+        "get", alias="request.method"
+    )
+    request_post_data: Optional[str] = Field(None, alias="request.postData")
+    request_post_content_type: Optional[str] = Field(
+        None, alias="request.postContentType"
+    )
 
 
 def _handle_requests(website: str, scraper_name: Optional[str]):
@@ -41,6 +51,8 @@ def _handle_flaresolverr(website: str, scraper_name: Optional[str]):
 
     if scraper_name == "flaresolverr-alt":
         endpoint = get_settings().flaresolverr_alt_endpoint
+    if scraper_name == "flare-bypasser":
+        endpoint = get_settings().flarebypasser_endpoint
 
     fs = FlareSolverr.get(
         options=FlareRequestOptions(
@@ -58,10 +70,15 @@ def _handle_flaresolverr(website: str, scraper_name: Optional[str]):
 _scraper_handlers = {
     "flaresolverr": _handle_flaresolverr,
     "flaresolverr-alt": _handle_flaresolverr,
+    "flare-bypasser": _handle_flaresolverr,
     "primp": _handle_primp,
     "requests": _handle_requests,
 }
 
 
 def handle_scrapers(website: str, body: ScrapeBody) -> Response | str:
-    return _scraper_handlers[body.scraper](website, body.scraper)
+    try:
+        return _scraper_handlers[body.scraper](website, body.scraper)
+    except Exception as e:
+        print(e)
+        return process_error(500)

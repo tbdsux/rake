@@ -21,6 +21,12 @@ async def get_scrape_website(website: str, query: Annotated[ScrapeBody, Query()]
     if not isinstance(html_response, str):
         return html_response
 
+    if query.response == "html":
+        return Response(
+            content=html_response.strip(),
+            media_type="text/plain",
+        )
+
     markdown = ""
 
     if query.markdown_processor == "html2text":
