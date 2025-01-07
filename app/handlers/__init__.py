@@ -62,7 +62,9 @@ def _handle_flaresolverr(website: str, scraper_name: Optional[str]):
     )
 
     if fs.res.status != "ok":
-        return process_error(fs.res.solution.status)
+        return process_error(
+            fs.res.solution.status if fs.res.solution is not None else 500
+        )
 
     return fs.res.solution.response
 

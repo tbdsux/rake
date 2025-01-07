@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from pydantic import BaseModel, ConfigDict
 
@@ -17,23 +17,25 @@ class FlareRequestConfig(BaseModel):
     endpoint: str
 
 
-class FlareResponseSolution(BaseModel):
-    model_config = ConfigDict(from_attributes=True, extra="allow")
+class FlareResponseSolution(
+    BaseModel,
+):
+    model_config = ConfigDict(from_attributes=True, strict=False, extra="allow")
 
     url: str
     status: int
-    headers: Dict[str, str]
+    headers: Optional[Dict[str, str]] = None
     response: str
     cookies: List[Dict[str, Any]]
     userAgent: str
 
 
 class FlareResponse(BaseModel):
-    model_config = ConfigDict(from_attributes=True, extra="allow")
+    model_config = ConfigDict(from_attributes=True, strict=False, extra="allow")
 
-    solution: FlareResponseSolution
+    solution: Optional[FlareResponseSolution] = None
     status: str
     message: str
-    startTimestamp: int
-    endTimestamp: int
-    version: str
+    startTimestamp: Union[float, int]
+    endTimestamp: Union[float, int]
+    version: Optional[str] = None
