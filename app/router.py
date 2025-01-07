@@ -5,6 +5,7 @@ from fastapi import APIRouter, Query, Response
 
 from app import utils
 from app.handlers import ScrapeBody, handle_scrapers
+from app.markdown.html2text import HTML2Text
 from app.markdown.markdownify import Markdownify
 
 api_router = APIRouter(prefix="/r")
@@ -22,7 +23,9 @@ async def get_scrape_website(website: str, query: Annotated[ScrapeBody, Query()]
 
     markdown = ""
 
-    if query.markdown_processor == "markdownify":
+    if query.markdown_processor == "html2text":
+        markdown = HTML2Text.process(html_response, website).text
+    else:
         markdown = Markdownify.process(html_response, website).text
 
     return Response(
