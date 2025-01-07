@@ -13,7 +13,7 @@ from app.utils import process_error
 
 class ScrapeBody(BaseModel):
     scraper: Optional[
-        Literal["nodriver", "flaresolverr", "flaresolverr-alt", "primp", "requests"]
+        Literal["flaresolverr", "flaresolverr-alt", "primp", "requests"]
     ] = "primp"
     markdown_processor: Optional[Literal["markdownify", "html2text"]] = "markdownify"
 

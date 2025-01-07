@@ -9,7 +9,6 @@ dependencies = [
     "html2text>=2024.2.26",
     "httpx>=0.28.1",
     "markdownify>=0.14.1",
-    "nodriver>=0.38.post1",
     "primp>=0.9.3",
     "pydantic-settings>=2.7.1",
     "validators>=0.34.0",
