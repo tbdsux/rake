@@ -34,7 +34,11 @@ class CustomProcessor(MarkdownConverter):
         title_part = ' "%s"' % title.replace('"', r"\"") if title else ""
 
         # Add base url to href if it is not absolute
-        if not href.startswith("http://") and not href.startswith("https://"):
+        if (
+            href is not None
+            and not href.startswith("http://")
+            and not href.startswith("https://")
+        ):
             href = urljoin(self.base_url, href)
 
         return (
