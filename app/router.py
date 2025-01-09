@@ -7,6 +7,7 @@ from app import utils
 from app.handlers import ScrapeBody, handle_scrapers
 from app.markdown.html2text import HTML2Text
 from app.markdown.markdownify import Markdownify
+from app.settings import get_config, get_settings
 
 api_router = APIRouter(prefix="/r")
 
@@ -46,7 +47,15 @@ async def get_scrape_website(
     else:
         markdown = Markdownify.process(html_response, url_website).text
 
+    output = utils.remove_excessive_newlines(markdown).strip()
+    if (
+        get_config().replace_host_ip
+        and get_settings().host_ip is not None
+        and get_settings().host_ip.strip() != ""
+    ):
+        output = output.replace(get_settings().host_ip, "<REDACTED>")
+
     return Response(
-        content=utils.remove_excessive_newlines(markdown).strip(),
+        content=output,
         media_type="text/plain",
     )

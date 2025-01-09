@@ -13,6 +13,9 @@ services:
       - FLARESOLVERR_ENDPOINT=http://flaresolverr:8191
       - FLARESOLVERR_ALT_ENDPOINT=http://flaresolverr-alt:8191
       - FLAREBYPASSER_ENDPOINT=http://flare-bypasser:8080
+      - HOST_IP=
+      - CONFIG_REPLACE_HOST_IP=true
+      - CONFIG_RATE_LIMIT=false # TODO
 
   flaresolverr:
     image: ghcr.io/flaresolverr/flaresolverr:latest

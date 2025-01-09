@@ -8,7 +8,7 @@ from app.handlers.flaresolverr.options import FlareRequestConfig, FlareRequestOp
 from app.handlers.httpx import HTTPXRequests
 from app.handlers.primp import PrimpRequests
 from app.settings import get_settings
-from app.utils import process_error
+from app.utils import process_custom_error, process_error
 
 
 class ScrapeBody(BaseModel):
@@ -51,8 +51,14 @@ def _handle_flaresolverr(website: str, scraper_name: Optional[str]):
 
     if scraper_name == "flaresolverr-alt":
         endpoint = get_settings().flaresolverr_alt_endpoint
+
     if scraper_name == "flare-bypasser":
         endpoint = get_settings().flarebypasser_endpoint
+
+    if endpoint is None or endpoint.strip() == "":
+        return process_custom_error(
+            f"Endpoint for `{scraper_name}` is not set or is missing"
+        )
 
     fs = FlareSolverr.get(
         options=FlareRequestOptions(
