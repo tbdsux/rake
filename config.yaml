@@ -1,0 +1,8 @@
+# Replaces any text with the host's api to `<REDACTED>`
+replace_host_ip: true
+
+# TODO::
+# Rate limit requests
+rate_limit: false
+rate_limit_interval: 60 # seconds
+rate_limit_count: 3

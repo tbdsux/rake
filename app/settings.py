@@ -1,7 +1,12 @@
 from functools import lru_cache
-from typing import Optional
+from typing import Optional, Tuple, Type
 
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import (
+    BaseSettings,
+    PydanticBaseSettingsSource,
+    SettingsConfigDict,
+    YamlConfigSettingsSource,
+)
 
 
 class Settings(BaseSettings):
@@ -18,8 +23,22 @@ class Config(BaseSettings):
     rate_limit: Optional[bool] = False  # TODO: implement
 
     model_config = SettingsConfigDict(
-        env_file=".env", env_prefix="config_", case_sensitive=False, extra="ignore"
+        extra="ignore",
+        case_sensitive=False,
+        yaml_file="config.yaml",
+        yaml_file_encoding="utf-8",
     )
+
+    @classmethod
+    def settings_customise_sources(
+        cls,
+        settings_cls: Type[BaseSettings],
+        init_settings: PydanticBaseSettingsSource,
+        env_settings: PydanticBaseSettingsSource,
+        dotenv_settings: PydanticBaseSettingsSource,
+        file_secret_settings: PydanticBaseSettingsSource,
+    ) -> Tuple[PydanticBaseSettingsSource, ...]:
+        return (YamlConfigSettingsSource(settings_cls),)
 
 
 @lru_cache
