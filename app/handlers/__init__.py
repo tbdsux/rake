@@ -61,7 +61,9 @@ def _handle_flaresolverr(website: str, scraper_name: Optional[str]):
             f"Endpoint for `{scraper_name}` is not set or is missing"
         )
 
-    fc_cache_cookies = get_flare_cache(website)
+    fc_cache_cookies = get_flare_cache(
+        website, "flaresolverr" if scraper_name is None else scraper_name
+    )
 
     fs = FlareSolverr.get(
         options=FlareRequestOptions(url=website, cookies=fc_cache_cookies),
@@ -73,12 +75,18 @@ def _handle_flaresolverr(website: str, scraper_name: Optional[str]):
             fs.res.solution.status if fs.res.solution is not None else 500
         )
 
-    try:
-        setup_flare_cache(website, fs.res.solution.cookies)
-    except Exception as e:
-        # TODO: implement better error handling
-        print("[ERR] Save flare cache:", e)
-        pass
+    if fc_cache_cookies is None:
+        # save session only if the current cookies for it is missing
+        try:
+            setup_flare_cache(
+                website,
+                fs.res.solution.cookies,
+                "flaresolverr" if scraper_name is None else scraper_name,
+            )
+        except Exception as e:
+            # TODO: implement better error handling
+            print("[ERR] Save flare cache:", e)
+            pass
 
     return fs.res.solution.response
 

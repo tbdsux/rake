@@ -38,7 +38,9 @@ class FlareCache(ValkeyDB):
 cache = FlareCache()
 
 
-def setup_flare_cache(website: str, cookies: List[Dict[str, Any]] = None):
+def setup_flare_cache(
+    website: str, scraper_name: str, cookies: List[Dict[str, Any]] = None
+):
     if cookies is None:
         cookies = []
     if not get_config().flare_use_cache:
@@ -53,15 +55,15 @@ def setup_flare_cache(website: str, cookies: List[Dict[str, Any]] = None):
     return cache.set(
         host,
         json.dumps(cookies),
-        prefix_key="fc",
+        prefix_key=scraper_name,
     )
 
 
-def get_flare_cache(website: str):
+def get_flare_cache(website: str, scraper_name: str):
     if not get_config().flare_use_cache:
         return None
 
     parsed_url = urlparse(website)
     host = parsed_url.netloc
 
-    return cache.get(host, prefix_key="fc")
+    return cache.get(host, prefix_key=scraper_name)
