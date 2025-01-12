@@ -32,34 +32,24 @@ class RateLimit(ValkeyDB):
         return self.client.incr(item_key)
 
 
-def check_for_rate_limit(real_ip: str | None, forwarded_for: str | None):
+rl = RateLimit()
+
+
+def check_for_rate_limit(client_ip: str | None):
     if not get_config().rate_limit:
         return True
 
-    if real_ip is None and forwarded_for is None:
+    if client_ip is None or client_ip.strip() == "":
         # no ip checked, no need to rate limit
         return True
 
-    rl = RateLimit()
+    count = rl.get(client_ip, "ip")
+    if count is None or count < get_config().rate_limit_count:
+        if count is None:
+            rl.set(client_ip, 1, "ip")
+        else:
+            rl.incr(client_ip, "ip")
 
-    if real_ip is not None:
-        count = rl.get(real_ip, "ip")
-        if count is None or count < get_config().rate_limit_count:
-            if count is None:
-                rl.set(real_ip, 1, "ip")
-            else:
-                rl.incr(real_ip, "ip")
-
-            return True
-
-    if forwarded_for is not None:
-        count = rl.get(forwarded_for, "ip")
-        if count is None or count < get_config().rate_limit_count:
-            if count is None:
-                rl.set(real_ip, 1, "ip")
-            else:
-                rl.incr(real_ip, "ip")
-
-            return True
+        return True
 
     return False

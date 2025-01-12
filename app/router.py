@@ -22,7 +22,6 @@ async def get_scrape_website(
         ),
     ],
     query: Annotated[ScrapeBody, Query()],
-    real_ip: str = Header(None, alias="X-Real-IP"),
     forwarded_for: str = Header(None, alias="X-Forwarded-For"),
 ):
     # NOTE: for some reason, `https://example.com` becomes `https:/example.com`
@@ -32,8 +31,12 @@ async def get_scrape_website(
     if not validators.url(url_website):
         return Response(content="Invalid URL", status_code=400, media_type="text/plain")
 
+    client_ip = (
+        forwarded_for.split(",")[0].strip() if forwarded_for is not None else None
+    )
+
     # check for rate limits
-    if not check_for_rate_limit(real_ip, forwarded_for):
+    if not check_for_rate_limit(client_ip):
         return Response(
             content="429 Error - Rate limit exceeded",
             status_code=429,
