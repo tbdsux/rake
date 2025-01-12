@@ -26,7 +26,10 @@ class Config(BaseSettings):
 
     rate_limit: Optional[bool] = False
     rate_limit_count: Optional[int] = 10
-    rate_limit_duration: Optional[int] = 60  # seconds
+    rate_limit_duration: Optional[int] = 60  # 1 minute
+
+    flare_use_cache: Optional[bool] = True
+    flare_cache_ttl: Optional[int] = 86400  # 1 day
 
     model_config = SettingsConfigDict(
         extra="ignore",

@@ -7,6 +7,7 @@ from app.handlers.flaresolverr import FlareSolverr
 from app.handlers.flaresolverr.options import FlareRequestConfig, FlareRequestOptions
 from app.handlers.httpx import HTTPXRequests
 from app.handlers.primp import PrimpRequests
+from app.lib.flare_cache import get_flare_cache, setup_flare_cache
 from app.settings import get_settings
 from app.utils import process_custom_error, process_error
 
@@ -60,10 +61,10 @@ def _handle_flaresolverr(website: str, scraper_name: Optional[str]):
             f"Endpoint for `{scraper_name}` is not set or is missing"
         )
 
+    fc_cache_cookies = get_flare_cache(website)
+
     fs = FlareSolverr.get(
-        options=FlareRequestOptions(
-            url=website,
-        ),
+        options=FlareRequestOptions(url=website, cookies=fc_cache_cookies),
         config=FlareRequestConfig(endpoint=endpoint),
     )
 
@@ -71,6 +72,13 @@ def _handle_flaresolverr(website: str, scraper_name: Optional[str]):
         return process_error(
             fs.res.solution.status if fs.res.solution is not None else 500
         )
+
+    try:
+        setup_flare_cache(website, fs.res.solution.cookies)
+    except Exception as e:
+        # TODO: implement better error handling
+        print("[ERR] Save flare cache:", e)
+        pass
 
     return fs.res.solution.response
 

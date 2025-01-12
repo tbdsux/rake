@@ -11,6 +11,7 @@ class FlareRequestOptions(BaseModel):
     session: Optional[str] = None
     proxy: Optional[ProxyOptions] = None
     postData: Optional[str] = None
+    cookies: Optional[List[Dict[str, Any]]] = None
 
 
 class FlareRequestConfig(BaseModel):

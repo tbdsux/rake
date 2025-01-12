@@ -43,6 +43,9 @@ class FlareSolverr:
         if options.session:
             data["session"] = options.session
 
+        if options.cookies:
+            data["cookies"] = options.cookies
+
         if method == "post":
             data["postData"] = options.postData
 
@@ -52,6 +55,6 @@ class FlareSolverr:
             req = cls.client.post(
                 urljoin(config.endpoint, "/v1"), headers=headers, json=data
             )
-            res = FlareResponse.model_validate_json(req.text)
+            res = FlareResponse.model_validate_json(req.text, strict=False)
 
         return cls(res)

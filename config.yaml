@@ -5,3 +5,7 @@ replace_host_ip: true
 rate_limit: true
 rate_limit_duration: 60 # seconds
 rate_limit_count: 5
+
+# for flaresolverr variants
+flare_use_cache: true
+flare_cache_ttl: 86400 # 1 day
