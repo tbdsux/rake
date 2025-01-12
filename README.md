@@ -7,15 +7,17 @@ Scraper API as a service.
 Optional / required environment variables
 
 ```sh
-# settings
+# flaresolverr and its variants
 FLARESOLVERR_ENDPOINT=
 FLARESOLVERR_ALT_ENDPOINT=
 FLAREBYPASSER_ENDPOINT=
+
+# host settings
 HOST_IP=
 
-# configs
-CONFIG_REPLACE_HOST_IP = true # <if you self host in a vps and share and you want to protect your service' ip>
-CONFIG_RATE_LIMIT = false # TODO
+# valkey settings
+VALKEY_HOST=valkey
+VALKEY_PORT=6379
 ```
 
 This project uses [`uv`](https://docs.astral.sh/uv/) for project management.
@@ -41,7 +43,7 @@ docker compose up -d
 ```
 
 > [!NOTE]
-> If you plan on self hosting this project in a vps and share it, `HOST_IP` needs to be set and `CONFIG_REPLACE_HOST_IP` needs to be set to `true`.
+> If you plan on self hosting this project in a vps and share it, `HOST_IP` needs to be set and `replace_host_ip` in your `config.yaml` needs to be set to `true`.
 >
 > This protects your service' ip from being used again ip detection services.
 >
@@ -56,6 +58,10 @@ Add the following field in your `config.yaml` file
 rate_limit: false # enable / disable
 rate_limit_duration: 60 # seconds
 rate_limit_count: 5 # number of requests / duration
+
+# Cookie Caching for FlareSolverr and Variants
+flare_use_cache: true
+flare_cache_ttl: 86400 # 1 day
 ```
 
 #### Upgrade
