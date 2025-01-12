@@ -1,10 +1,11 @@
 from typing import Annotated
 
 import validators
-from fastapi import APIRouter, Path, Query, Response
+from fastapi import APIRouter, Header, Path, Query, Response
 
 from app import utils
 from app.handlers import ScrapeBody, handle_scrapers
+from app.lib.rate_limit import check_for_rate_limit
 from app.markdown.html2text import HTML2Text
 from app.markdown.markdownify import Markdownify
 from app.settings import get_config, get_settings
@@ -21,6 +22,8 @@ async def get_scrape_website(
         ),
     ],
     query: Annotated[ScrapeBody, Query()],
+    real_ip: str = Header(None, alias="X-Real-IP"),
+    forwarded_for: str = Header(None, alias="X-Forwarded-For"),
 ):
     # NOTE: for some reason, `https://example.com` becomes `https:/example.com`
     #       which should not happen, but is weird
@@ -28,6 +31,14 @@ async def get_scrape_website(
 
     if not validators.url(url_website):
         return Response(content="Invalid URL", status_code=400, media_type="text/plain")
+
+    # check for rate limits
+    if not check_for_rate_limit(real_ip, forwarded_for):
+        return Response(
+            content="429 Error - Rate limit exceeded",
+            status_code=429,
+            media_type="text/plain",
+        )
 
     html_response = handle_scrapers(url_website, query)
 

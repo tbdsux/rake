@@ -15,12 +15,18 @@ class Settings(BaseSettings):
     flarebypasser_endpoint: Optional[str] = None
     host_ip: Optional[str] = ""
 
+    valkey_host: Optional[str] = "localhost"
+    valkey_port: Optional[int] = 6379
+
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 
 class Config(BaseSettings):
     replace_host_ip: Optional[bool] = True
-    rate_limit: Optional[bool] = False  # TODO: implement
+
+    rate_limit: Optional[bool] = False
+    rate_limit_count: Optional[int] = 10
+    rate_limit_duration: Optional[int] = 60  # seconds
 
     model_config = SettingsConfigDict(
         extra="ignore",

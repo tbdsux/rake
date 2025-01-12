@@ -47,6 +47,17 @@ docker compose up -d
 >
 > For example: if your vps is `1.1.1.1`, it will be replaced with `<REDACTED>` in the returned output.
 
+#### Rate Limiting
+
+Add the following field in your `config.yaml` file
+
+```yaml
+# Rate limit requests
+rate_limit: false # enable / disable
+rate_limit_duration: 60 # seconds
+rate_limit_count: 5 # number of requests / duration
+```
+
 #### Upgrade
 
 ```sh

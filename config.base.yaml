@@ -1,7 +1,9 @@
+# Use this only as basis for your `config.yaml`
+
 # Replaces any text with the host's api to `<REDACTED>`
 replace_host_ip: true
 
 # Rate limit requests
-rate_limit: true
+rate_limit: false
 rate_limit_duration: 60 # seconds
 rate_limit_count: 5
