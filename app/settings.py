@@ -1,5 +1,5 @@
 from functools import lru_cache
-from typing import Optional, Tuple, Type
+from typing import List, Optional, Tuple, Type
 
 from pydantic_settings import (
     BaseSettings,
@@ -13,8 +13,6 @@ class Settings(BaseSettings):
     flaresolverr_endpoint: Optional[str] = None
     flaresolverr_alt_endpoint: Optional[str] = None
     flarebypasser_endpoint: Optional[str] = None
-    host_ip: Optional[str] = ""
-
     valkey_host: Optional[str] = "localhost"
     valkey_port: Optional[int] = 6379
 
@@ -22,7 +20,7 @@ class Settings(BaseSettings):
 
 
 class Config(BaseSettings):
-    replace_host_ip: Optional[bool] = True
+    redact_texts: List[str]
 
     rate_limit: Optional[bool] = False
     rate_limit_count: Optional[int] = 10

@@ -15,9 +15,6 @@ services:
       - FLARESOLVERR_ALT_ENDPOINT=http://flaresolverr-alt:8191
       - FLAREBYPASSER_ENDPOINT=http://flare-bypasser:8080
 
-      # host settings
-      - HOST_IP=
-
       # valkey
       - VALKEY_HOST=valkey
       - VALKEY_PORT=6379

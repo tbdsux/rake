@@ -1,5 +1,5 @@
-# Replaces any text with the host's api to `<REDACTED>`
-replace_host_ip: true
+# Replaces any text in the output to `<REDACTED>`
+redact_texts: []
 
 # Rate limit requests
 rate_limit: true

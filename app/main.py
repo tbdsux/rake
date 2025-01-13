@@ -21,9 +21,6 @@ def root(
             {
                 "message": "Rake!",
                 "config": get_config().model_dump(mode="json"),
-                # TODO: to be removed
-                "real_ip": real_ip,
-                "forwarded_for": forwarded_for,
             }
         ),
         media_type="application/json",

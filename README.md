@@ -12,9 +12,6 @@ FLARESOLVERR_ENDPOINT=
 FLARESOLVERR_ALT_ENDPOINT=
 FLAREBYPASSER_ENDPOINT=
 
-# host settings
-HOST_IP=
-
 # valkey settings
 VALKEY_HOST=valkey
 VALKEY_PORT=6379
@@ -43,7 +40,12 @@ docker compose up -d
 ```
 
 > [!NOTE]
-> If you plan on self hosting this project in a vps and share it, `HOST_IP` needs to be set and `replace_host_ip` in your `config.yaml` needs to be set to `true`.
+> If you plan on self hosting this project in a vps and share it, make sure to add your vps' ip in the `redact_texts` array to avoid it from being exposed.
+>
+> ```yaml
+> redact_texts:
+>   - "121.121.121.121"
+> ```
 >
 > This protects your service' ip from being used again ip detection services.
 >
@@ -54,6 +56,9 @@ docker compose up -d
 Add the following field in your `config.yaml` file
 
 ```yaml
+# Replaces any text in the output to `<REDACTED>`
+redact_texts: []
+
 # Rate limit requests
 rate_limit: false # enable / disable
 rate_limit_duration: 60 # seconds
