@@ -1,7 +1,7 @@
 from typing import Literal, Optional
 
 from fastapi import Response
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from app.handlers.flaresolverr import FlareSolverr
 from app.handlers.flaresolverr.options import FlareRequestConfig, FlareRequestOptions
@@ -28,9 +28,20 @@ class ScrapeBody(BaseModel):
         None, alias="request.postContentType"
     )
 
+    model_config = ConfigDict(populate_by_name=True)
 
-def _handle_requests(website: str, scraper_name: Optional[str]):
-    res = HTTPXRequests.get(website)
+
+def _handle_requests(website: str, query: ScrapeBody):
+    res = None
+
+    if query.request_method == "get":
+        res = HTTPXRequests.get(website)
+    elif query.request_method == "post":
+        headers = None
+        if query.request_post_content_type is not None:
+            headers = {"Content-Type": query.request_post_content_type}
+
+        res = HTTPXRequests.post(website, query.request_post_data, headers)
 
     if not res.is_ok:
         return process_error(res.res.status_code)
@@ -38,8 +49,19 @@ def _handle_requests(website: str, scraper_name: Optional[str]):
     return res.res.text
 
 
-def _handle_primp(website: str, scraper_name: Optional[str]):
-    res = PrimpRequests.get(website)
+def _handle_primp(website: str, query: ScrapeBody):
+    res = None
+
+    print(query)
+
+    if query.request_method == "get":
+        res = PrimpRequests.get(website)
+    elif query.request_method == "post":
+        headers = None
+        if query.request_post_content_type is not None:
+            headers = {"Content-Type": query.request_post_content_type}
+
+        res = PrimpRequests.post(website, query.request_post_data, headers)
 
     if not res.is_ok:
         return process_error(res.res.status_code)
@@ -47,7 +69,9 @@ def _handle_primp(website: str, scraper_name: Optional[str]):
     return res.res.text
 
 
-def _handle_flaresolverr(website: str, scraper_name: Optional[str]):
+def _handle_flaresolverr(website: str, query: ScrapeBody):
+    scraper_name = query.scraper
+
     endpoint = get_settings().flaresolverr_endpoint
 
     if scraper_name == "flaresolverr-alt":
@@ -65,12 +89,22 @@ def _handle_flaresolverr(website: str, scraper_name: Optional[str]):
         website, "flaresolverr" if scraper_name is None else scraper_name
     )
 
-    fs = FlareSolverr.get(
-        options=FlareRequestOptions(url=website, cookies=fc_cache_cookies),
-        config=FlareRequestConfig(endpoint=endpoint),
-    )
+    fs = None
+    if query.request_method == "get":
+        fs = FlareSolverr.get(
+            options=FlareRequestOptions(url=website, cookies=fc_cache_cookies),
+            config=FlareRequestConfig(endpoint=endpoint),
+        )
+    elif query.request_method == "post":
+        fs = FlareSolverr.post(
+            options=FlareRequestOptions(
+                url=website, postData=query.request_post_data, cookies=fc_cache_cookies
+            ),
+            config=FlareRequestConfig(endpoint=endpoint),
+        )
 
     if fs.res.status != "ok":
+        print(fs.res)
         return process_error(
             fs.res.solution.status if fs.res.solution is not None else 500
         )
@@ -100,9 +134,12 @@ _scraper_handlers = {
 }
 
 
-def handle_scrapers(website: str, body: ScrapeBody) -> Response | str:
+def handle_scrapers(
+    website: str,
+    query: ScrapeBody,
+) -> Response | str:
     try:
-        return _scraper_handlers[body.scraper](website, body.scraper)
+        return _scraper_handlers[query.scraper](website, query)
     except Exception as e:
         print(e)
         return process_error(500)

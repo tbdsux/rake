@@ -47,7 +47,8 @@ class FlareSolverr:
             data["cookies"] = options.cookies
 
         if method == "post":
-            data["postData"] = options.postData
+            if options.postData:
+                data["postData"] = options.postData
 
         headers = {"Content-Type": "application/json"}
 
