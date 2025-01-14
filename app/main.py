@@ -1,6 +1,6 @@
 import json
 
-from fastapi import FastAPI, Header, Response
+from fastapi import FastAPI, Response
 
 from app.router import api_router
 from app.settings import get_config
@@ -12,10 +12,7 @@ app.include_router(api_router)
 
 
 @app.get("/")
-def root(
-    real_ip: str = Header(None, alias="X-Real-IP"),
-    forwarded_for: str = Header(None, alias="X-Forwarded-For"),
-):
+def root():
     return Response(
         content=json.dumps(
             {

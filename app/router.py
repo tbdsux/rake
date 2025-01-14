@@ -63,8 +63,6 @@ async def get_scrape_website(
 
     output = utils.remove_excessive_newlines(markdown).strip()
 
-    print(get_config().redact_texts)
-
     if len(get_config().redact_texts) > 0:
         # Replace each text set in `redact_texts` to `<REDACTED>`
         for redact_text in get_config().redact_texts:
