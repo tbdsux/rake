@@ -1,18 +1,39 @@
-# rake
+# Rake
 
-Scraper API as a service.
+Rake is a self-hosted Scraper API as a service, convert webpages to Markdown or plain HTML.
+
+## Demo
+
+> [!NOTE]
+> Demo URL: [`https://rake.tbdh.app/`](https://rake.tbdh.app/)
+>
+> Rate Limits: `5 (requests) / 60 (seconds or 1 minute)`
+
+```sh
+>> curl "https://rake.tbdh.app/r/https://example.com/"
+
+Example Domain
+
+Example Domain
+==============
+
+This domain is for use in illustrative examples in documents. You may use this
+domain in literature without prior coordination or asking for permission.
+
+[More information...](https://www.iana.org/domains/example)
+```
 
 ## Development
 
 Optional / required environment variables
 
 ```sh
-# flaresolverr and its variants
+# Flaresolverr and its variants
 FLARESOLVERR_ENDPOINT=
 FLARESOLVERR_ALT_ENDPOINT=
 FLAREBYPASSER_ENDPOINT=
 
-# valkey settings
+# Valkey settings
 VALKEY_HOST=valkey
 VALKEY_PORT=6379
 ```
@@ -28,6 +49,8 @@ uv sync --frozen
 ```
 
 ### Hosting
+
+> [!IMPORTANT] > `Flaresolverr` and `flare-bypasser` operate using a browser within a Docker container, which can consume significant resources (CPU and RAM). Consider this when opting to self-host on a shared VPS.
 
 We provide `docker-compose.yml` for fast and easy setup self hosting.
 
@@ -47,7 +70,7 @@ docker compose up -d
 >   - "121.121.121.121"
 > ```
 >
-> This protects your service' ip from being used again ip detection services.
+> This protects your service' ip from being used against ip detection services.
 >
 > For example: if your vps is `1.1.1.1`, it will be replaced with `<REDACTED>` in the returned output.
 
@@ -76,5 +99,17 @@ flare_cache_ttl: 86400 # 1 day
 git pull
 
 # rebuild compose
-docker compose up -d --rebuild
+docker compose up -d --build
 ```
+
+### Tech Stack
+
+This project uses the following amazing projects:
+
+- [FlareSolverr](https://github.com/FlareSolverr/FlareSolverr) for bypassing Cloudflare protection
+- [FlareSolverr (fork)](https://github.com/21hsmw/FlareSolverr) for bypassing Cloudflare protection
+- [Flare-Bypasser](https://github.com/yoori/flare-bypasser/) for bypassing Cloudflare protection
+- [Primp](https://github.com/deedy5/primp) for HTTP requests
+- [Markdownify](https://github.com/matthewwithanm/python-markdownify) and [Html2Text](https://github.com/Alir3z4/html2text/) for HTML to Markdown conversion
+- [HTTPX](https://github.com/encode/httpx/) and [Requests](https://github.com/psf/requests) for making HTTP requests
+- [Valkey](https://github.com/valkey-io/valkey) for caching and rate limiting
