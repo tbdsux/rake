@@ -22,7 +22,7 @@ async def get_scrape_website(
         ),
     ],
     query: Annotated[ScrapeBody, Query()],
-    forwarded_for: str = Header(None, alias="X-Forwarded-For"),
+    forwarded_for: str = Header(None, alias="X-Forwarded-For", include_in_schema=False),
 ):
     # NOTE: for some reason, `https://example.com` becomes `https:/example.com`
     #       which should not happen, but is weird
