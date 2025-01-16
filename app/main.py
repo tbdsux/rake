@@ -21,7 +21,9 @@ def root():
         content=json.dumps(
             {
                 "message": "Rake!",
-                "config": get_config().model_dump(mode="json"),
+                "config": get_config().model_dump(
+                    mode="json", exclude={"redact_texts"}
+                ),
             }
         ),
         media_type="application/json",
