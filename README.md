@@ -7,6 +7,8 @@ Rake is a self-hosted Scraper API as a service, convert webpages to Markdown or 
 > [!NOTE]
 > Demo URL: [`https://rake.tbdh.app/`](https://rake.tbdh.app/)
 >
+> Swagger: [`https://rake.tbdh.app/docs`](https://rake.tbdh.app/docs)
+>
 > Rate Limits: `5 (requests) / 60 (seconds or 1 minute)`
 
 ```sh
@@ -38,6 +40,8 @@ VALKEY_HOST=valkey
 VALKEY_PORT=6379
 ```
 
+Minimum Python Version: `3.12`
+
 This project uses [`uv`](https://docs.astral.sh/uv/) for project management.
 
 ```sh
@@ -46,6 +50,9 @@ git clone https://github.com/tbdsux/rake.git
 cd rake
 
 uv sync --frozen
+
+# run fastapi dev server
+uv run fastapi dev
 ```
 
 ### Hosting
@@ -74,7 +81,7 @@ docker compose up -d
 >
 > For example: if your vps is `1.1.1.1`, it will be replaced with `<REDACTED>` in the returned output.
 
-#### Rate Limiting
+#### Configuration
 
 Add the following field in your `config.yaml` file
 
@@ -104,12 +111,17 @@ docker compose up -d --build
 
 ### Tech Stack
 
-This project uses the following amazing projects:
+This project is built with:
+
+- [FastAPI](https://github.com/fastapi/fastapi) - API
+- [uv](https://github.com/astral-sh/uv) - Project Management
+
+Also, this project uses the following amazing projects:
 
 - [FlareSolverr](https://github.com/FlareSolverr/FlareSolverr) for bypassing Cloudflare protection
 - [FlareSolverr (fork)](https://github.com/21hsmw/FlareSolverr) for bypassing Cloudflare protection
 - [Flare-Bypasser](https://github.com/yoori/flare-bypasser/) for bypassing Cloudflare protection
 - [Primp](https://github.com/deedy5/primp) for HTTP requests
-- [Markdownify](https://github.com/matthewwithanm/python-markdownify) and [Html2Text](https://github.com/Alir3z4/html2text/) for HTML to Markdown conversion
 - [HTTPX](https://github.com/encode/httpx/) and [Requests](https://github.com/psf/requests) for making HTTP requests
+- [Markdownify](https://github.com/matthewwithanm/python-markdownify) and [Html2Text](https://github.com/Alir3z4/html2text/) for HTML to Markdown conversion
 - [Valkey](https://github.com/valkey-io/valkey) for caching and rate limiting
