@@ -1,6 +1,6 @@
 # Rake
 
-Rake is a self-hosted Scraper API as a service, convert webpages to Markdown or plain HTML.
+Rake is a scraper api that converts webpages to Markdown or plain HTML texts.
 
 ## Demo
 
@@ -14,13 +14,15 @@ Rake is a self-hosted Scraper API as a service, convert webpages to Markdown or 
 ```sh
 >> curl "https://rake.tbdh.app/r/https://example.com/"
 
-Example Domain
+Title: Example Domain
+URL: https://example.com/
+
+CONTENT:
 
 Example Domain
 ==============
 
-This domain is for use in illustrative examples in documents. You may use this
-domain in literature without prior coordination or asking for permission.
+This domain is for use in illustrative examples in documents. You may use this domain in literature without prior coordination or asking for permission.
 
 [More information...](https://www.iana.org/domains/example)
 ```
