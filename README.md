@@ -59,7 +59,8 @@ uv run fastapi dev
 
 ### Hosting
 
-> [!IMPORTANT] > `Flaresolverr` and `flare-bypasser` operate using a browser within a Docker container, which can consume significant resources (CPU and RAM). Consider this when opting to self-host on a shared VPS.
+> [!IMPORTANT]
+> `Flaresolverr` and `flare-bypasser` operate using a browser within a Docker container, which can consume significant resources (CPU and RAM). Consider this when opting to self-host on a shared VPS.
 
 We provide `docker-compose.yml` for fast and easy setup self hosting.
 
