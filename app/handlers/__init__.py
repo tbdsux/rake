@@ -12,7 +12,7 @@ from app.settings import get_settings
 from app.utils import process_custom_error, process_error
 
 
-class ScrapeBody(BaseModel):
+class ScrapeParams(BaseModel):
     scraper: Optional[
         Literal[
             "flaresolverr", "flaresolverr-alt", "primp", "requests", "flare-bypasser"
@@ -31,7 +31,7 @@ class ScrapeBody(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-def _handle_requests(website: str, query: ScrapeBody):
+def _handle_requests(website: str, query: ScrapeParams):
     res = None
 
     if query.request_method == "get":
@@ -49,7 +49,7 @@ def _handle_requests(website: str, query: ScrapeBody):
     return res.res.text
 
 
-def _handle_primp(website: str, query: ScrapeBody):
+def _handle_primp(website: str, query: ScrapeParams):
     res = None
 
     print(query)
@@ -69,7 +69,7 @@ def _handle_primp(website: str, query: ScrapeBody):
     return res.res.text
 
 
-def _handle_flaresolverr(website: str, query: ScrapeBody):
+def _handle_flaresolverr(website: str, query: ScrapeParams):
     scraper_name = query.scraper
 
     endpoint = get_settings().flaresolverr_endpoint
@@ -136,7 +136,7 @@ _scraper_handlers = {
 
 def handle_scrapers(
     website: str,
-    query: ScrapeBody,
+    query: ScrapeParams,
 ) -> Response | str:
     try:
         return _scraper_handlers[query.scraper](website, query)
